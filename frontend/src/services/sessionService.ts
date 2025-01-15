@@ -10,7 +10,17 @@ const toggleTheme = () => {
     userSession.currentTheme.value = activeTheme
 }
 
+const debounce = (func: Function, delay: number) => {
+    let timeout: ReturnType<typeof setTimeout>
+
+    return (...args: any[]) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => func(...args), delay)
+    }
+}
+
 export {
     userSession,
-    toggleTheme
+    toggleTheme,
+    debounce
 }

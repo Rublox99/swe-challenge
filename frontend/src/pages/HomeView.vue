@@ -12,6 +12,8 @@ var areEmailsLoading = ref(false)
 var selectedEmail = ref<EmailSource>()
 var isSelectedEmailLoading = ref(false)
 
+var searchTerm = ref('')
+
 var page = ref(1)
 var batchSize = ref(10)
 var pageSizes = ref([5, 10, 15, 20])
@@ -24,9 +26,18 @@ onMounted(() => {
     fetchAllEmails()
 })
 
+const handleSearch = async (text: string) => {
+    searchTerm.value = text
+    await onParamChange()
+}
+
 const onParamChange = async () => {
     page.value = 1
-    await fetchAllEmails()
+
+    if (searchTerm.value.length === 0)
+        await fetchAllEmails()
+    else
+        await fetchFilteredEmails()
 }
 
 const onEmailClick = async (e: EmailSource) => {
@@ -43,16 +54,45 @@ const onEmailClick = async (e: EmailSource) => {
     isSelectedEmailLoading.value = false
 }
 
-const fetchAllEmails = async () => {
+const fetchFilteredEmails = async () => {
     const pg = page.value
     const size = batchSize.value
+    const from = (pg * size) - size
+
+    console.log('When fetching with filters:', searchTerm.value)
 
     areEmailsLoading.value = true
 
     try {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
-        const { hits } = await ZincService.GetAllEmails(pg === 1 ? 0 : (pg * size) - size, size)
+        const { hits } = await ZincService.GetFilteredEmails(pg === 1 ? 0 : from, size, '', '', searchTerm.value)
+        emails.value = hits.hits.map((hit) => hit._source)
+    } catch (error) {
+        errorTitle.value = "Error: Emails"
+        errorMessage.value = "An error occurred while fetching the filtered emails. Please, try again."
+
+        showAlert.value = true
+        await new Promise((resolve) => setTimeout(resolve, 2500))
+        showAlert.value = false
+    } finally {
+        areEmailsLoading.value = false
+    }
+}
+
+const fetchAllEmails = async () => {
+    const pg = page.value
+    const size = batchSize.value
+    const from = (pg * size) - size
+
+    console.log('When fetching all:', searchTerm.value)
+
+    areEmailsLoading.value = true
+
+    try {
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        const { hits } = await ZincService.GetAllEmails(pg === 1 ? 0 : from, size)
         emails.value = hits.hits.map((hit) => hit._source)
     } catch (error) {
         errorTitle.value = "Error: Emails"
@@ -72,7 +112,7 @@ const fetchAllEmails = async () => {
         'md:h-full': emails.length <= 11,
         'md:h-[92%]': emails.length > 11
     }">
-        <TopButtons></TopButtons>
+        <TopButtons @onSearchEmit="handleSearch"></TopButtons>
 
         <section class="flex flex-col w-full sm:h-auto gap-2 md:pb-0.5 md:pt-1 md:flex-row" :class="{
             'md:h-full': emails.length <= 11,

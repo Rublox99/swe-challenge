@@ -1,20 +1,33 @@
-<script setup>
+<script setup lang="ts">
 import { userSession } from '@/services/sessionService';
 import { Icon } from '@iconify/vue';
-import { ref } from 'vue';
-import { DateTime } from 'luxon'
+import { ref, defineEmits } from 'vue';
+import { debounce } from '@/services/sessionService';
+import { DateTime } from 'luxon';
 
-const startDate = ref()
-const endDate = ref()
+// Define the emit event
+const emit = defineEmits<{
+  (e: 'onSearchEmit', text: string): void; // 'search' event with text payload
+}>();
 
-const startMenu = ref(false)
-const endMenu = ref(false)
+const searchTerm = ref('');
 
-const formatDate = (date) => {
-  const d = DateTime.fromJSDate(new Date(date))
+const startDate = ref();
+const endDate = ref();
 
-  return d.toFormat('yyyy/MM/dd')
-}
+const startMenu = ref(false);
+const endMenu = ref(false);
+
+const formatDate = (date: any) => {
+  const d = DateTime.fromJSDate(new Date(date));
+  return d.toFormat('yyyy/MM/dd');
+};
+
+// Debounced search handler
+const onSearchType = debounce((text: string) => {
+  emit('onSearchEmit', text === null ? '' : text);
+}, 300);
+
 </script>
 
 <template>
@@ -22,9 +35,10 @@ const formatDate = (date) => {
     <!-- Search Section -->
     <section class="flex items-center gap-[10px] w-full lg:w-[425px] md:w-[325px]">
       <Icon icon="mdi:magnify" width="30"
-        :class="userSession.currentTheme.value === 'light' ? 'text-light-contrast' : 'text-dark-contrast'"></Icon>
-      <v-text-field bg-color="transparent" hide-details="auto" clearable label="Search" placeholder="Search on 'Subject', 'From', 'To' and 'Body' fields"
-        variant="outlined"></v-text-field>
+        :class="userSession.currentTheme.value === 'light' ? 'text-light-contrast' : 'text-dark-contrast'" />
+      <v-text-field bg-color="transparent" hide-details="auto" clearable label="Search"
+        placeholder="Search on 'Subject', 'From', 'To' and 'Body' fields" variant="outlined" v-model="searchTerm"
+        v-on:update:model-value="onSearchType" />
     </section>
 
     <!-- Dates Section -->
@@ -32,30 +46,28 @@ const formatDate = (date) => {
       <v-menu v-model="startMenu" transition="slide-y-transition" min-width="auto" :close-on-content-click="true">
         <template v-slot:activator="{ props }">
           <Icon icon="mdi:date-range" width="30" class="my-auto"
-            :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'"></Icon>
+            :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
           <v-text-field label="Start Date" placeholder="YYYY-mm-dd" hide-details="auto" variant="outlined"
             v-bind="props" v-model="startDate" :readonly="true" />
         </template>
 
-        <v-date-picker show-adjacent-months width="350"
-          @update:model-value="startDate = formatDate($event)"
-          :color="userSession.currentTheme.value === 'light' ? '#185E5E' : '#0E3838'"></v-date-picker>
+        <v-date-picker show-adjacent-months width="350" @update:model-value="startDate = formatDate($event)"
+          :color="userSession.currentTheme.value === 'light' ? '#185E5E' : '#0E3838'" />
       </v-menu>
 
       <Icon icon="mdi:arrow-left-right" width="30"
-        :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'"></Icon>
+        :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
 
       <v-menu v-model="endMenu" transition="slide-y-transition" min-width="auto" :close-on-content-click="true">
         <template v-slot:activator="{ props }">
           <v-text-field label="End Date" placeholder="YYYY-mm-dd" hide-details="auto" variant="outlined" v-bind="props"
             v-model="endDate" :readonly="true" />
           <Icon icon="mdi:date-range" width="30" class="my-auto"
-            :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'"></Icon>
+            :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
         </template>
 
-        <v-date-picker show-adjacent-months width="350"
-          @update:model-value="endDate = formatDate($event)"
-          :color="userSession.currentTheme.value === 'light' ? '#185E5E' : '#0E3838'"></v-date-picker>
+        <v-date-picker show-adjacent-months width="350" @update:model-value="endDate = formatDate($event)"
+          :color="userSession.currentTheme.value === 'light' ? '#185E5E' : '#0E3838'" />
       </v-menu>
     </section>
   </main>
