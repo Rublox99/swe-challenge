@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 var emailsURL = "http://localhost:4080/api/emails/_search"
@@ -74,26 +75,61 @@ func SearchEmailsWithFilters(w http.ResponseWriter, r *http.Request) {
 		endDate = "2024-12-31T23:59:59.999Z"
 	}
 
-	query := fmt.Sprintf(`
-	{
-		"search_type": "match",
-		"query": {
-			"term": "%s",
-			"fields": ["Body", "Subject", "From", "To"],
-			"fuzziness": 1,
-			"prefix_length": 5
-		},
-		"filter": {
-			"range": {
-				"Date": {
-					"gte": "%s",
-					"lte": "%s"
-				}
-			}
-		},
-		"from": %s,
-		"max_results": %s
-	}`, text, startDate, endDate, from, size)
+	parsedStartDate, err := time.Parse("2006/01/02", startDate)
+	if err != nil {
+		http.Error(w, "Invalid start date format. Expected yyyy/mm/dd", http.StatusBadRequest)
+		return
+	}
+	parsedEndDate, err := time.Parse("2006/01/02", endDate)
+	if err != nil {
+		http.Error(w, "Invalid end date format. Expected yyyy/mm/dd", http.StatusBadRequest)
+		return
+	}
+
+	startDateMillis := parsedStartDate.UTC().UnixMilli()
+	endDateMillis := parsedEndDate.UTC().UnixMilli()
+
+	text = strings.TrimSpace(text)
+
+	// Constructs the query based on whether the text parameter has content
+	var query string
+	if text != "" {
+		query = fmt.Sprintf(`
+    {
+        "search_type": "match",
+        "query": {
+            "term": "%s",
+            "fields": ["Body", "Subject", "From", "To"],
+            "fuzziness": 1,
+            "prefix_length": 5
+        },
+        "filter": {
+            "range": {
+                "Date": {
+                    "gte": %d,
+                    "lte": %d
+                }
+            }
+        },
+        "from": %s,
+        "max_results": %s
+    }`, text, startDateMillis, endDateMillis, from, size)
+	} else {
+		query = fmt.Sprintf(`
+    {
+        "search_type": "alldocuments",
+        "filter": {
+            "range": {
+                "Date": {
+                    "gte": %d,
+                    "lte": %d
+                }
+            }
+        },
+        "from": %s,
+        "max_results": %s
+    }`, startDateMillis, endDateMillis, from, size)
+	}
 
 	req, err := http.NewRequest("POST", emailsURL, strings.NewReader(query))
 	if err != nil {
