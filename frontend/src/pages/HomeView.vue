@@ -13,6 +13,8 @@ var selectedEmail = ref<EmailSource>()
 var isSelectedEmailLoading = ref(false)
 
 var searchTerm = ref('')
+var startDate = ref('')
+var endDate = ref('')
 
 var page = ref(1)
 var batchSize = ref(10)
@@ -26,15 +28,22 @@ onMounted(() => {
     fetchAllEmails()
 })
 
-const handleSearch = async (text: string) => {
+const handleSearch = async (text: string, start: string, end: string) => {
     searchTerm.value = text
+
+    startDate.value = start
+    endDate.value = end
+
     await onParamChange()
 }
 
 const onParamChange = async () => {
+    const isSearchEmpty = !searchTerm.value.trim()
+    const isDateRangeEmpty = !startDate.value && !endDate.value
+
     page.value = 1
 
-    if (searchTerm.value.length === 0)
+    if (isSearchEmpty && isDateRangeEmpty)
         await fetchAllEmails()
     else
         await fetchFilteredEmails()
@@ -59,14 +68,12 @@ const fetchFilteredEmails = async () => {
     const size = batchSize.value
     const from = (pg * size) - size
 
-    console.log('When fetching with filters:', searchTerm.value)
-
     areEmailsLoading.value = true
 
     try {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
-        const { hits } = await ZincService.GetFilteredEmails(pg === 1 ? 0 : from, size, '', '', searchTerm.value)
+        const { hits } = await ZincService.GetFilteredEmails(pg === 1 ? 0 : from, size, startDate.value, endDate.value, searchTerm.value)
         emails.value = hits.hits.map((hit) => hit._source)
     } catch (error) {
         errorTitle.value = "Error: Emails"
@@ -84,8 +91,6 @@ const fetchAllEmails = async () => {
     const pg = page.value
     const size = batchSize.value
     const from = (pg * size) - size
-
-    console.log('When fetching all:', searchTerm.value)
 
     areEmailsLoading.value = true
 

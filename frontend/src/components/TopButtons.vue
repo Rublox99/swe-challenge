@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { userSession } from '@/services/sessionService';
 import { Icon } from '@iconify/vue';
-import { ref, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 import { debounce } from '@/services/sessionService';
 import { DateTime } from 'luxon';
 
 // Define the emit event
 const emit = defineEmits<{
-  (e: 'onSearchEmit', text: string): void; // 'search' event with text payload
+  (e: 'onSearchEmit', term: string, start: string, end: string): void; // 'search' event with text payload
 }>();
 
-const searchTerm = ref('');
+const term = ref('');
 
 const startDate = ref();
 const endDate = ref();
@@ -23,10 +23,14 @@ const formatDate = (date: any) => {
   return d.toFormat('yyyy/MM/dd');
 };
 
-// Debounced search handler
-const onSearchType = debounce((text: string) => {
-  emit('onSearchEmit', text === null ? '' : text);
+const onSearchApply = debounce((text: string) => {
+  emit('onSearchEmit', text === null ? '' : text, startDate.value, endDate.value);
 }, 300);
+
+watch([startDate, endDate], () => {
+  if (startDate.value && endDate.value)
+    onSearchApply(term.value);
+})
 
 </script>
 
@@ -37,13 +41,13 @@ const onSearchType = debounce((text: string) => {
       <Icon icon="mdi:magnify" width="30"
         :class="userSession.currentTheme.value === 'light' ? 'text-light-contrast' : 'text-dark-contrast'" />
       <v-text-field bg-color="transparent" hide-details="auto" clearable label="Search"
-        placeholder="Search on 'Subject', 'From', 'To' and 'Body' fields" variant="outlined" v-model="searchTerm"
-        v-on:update:model-value="onSearchType" />
+        placeholder="Search on 'Subject', 'From', 'To' and 'Body' fields" variant="outlined" v-model="term"
+        v-on:update:model-value="onSearchApply" />
     </section>
 
     <!-- Dates Section -->
     <section class="flex items-center gap-[10px] w-full lg:w-[600px] md:w-[400px] sm:w-full">
-      <v-menu v-model="startMenu" transition="slide-y-transition" min-width="auto" :close-on-content-click="true">
+      <v-menu v-model="startMenu" transition="slide-y-transition" min-width="auto" :close-on-content-click="false">
         <template v-slot:activator="{ props }">
           <Icon icon="mdi:date-range" width="30" class="my-auto"
             :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
@@ -58,7 +62,7 @@ const onSearchType = debounce((text: string) => {
       <Icon icon="mdi:arrow-left-right" width="30"
         :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
 
-      <v-menu v-model="endMenu" transition="slide-y-transition" min-width="auto" :close-on-content-click="true">
+      <v-menu v-model="endMenu" transition="slide-y-transition" min-width="auto"  :close-on-content-click="false">
         <template v-slot:activator="{ props }">
           <v-text-field label="End Date" placeholder="YYYY-mm-dd" hide-details="auto" variant="outlined" v-bind="props"
             v-model="endDate" :readonly="true" />
