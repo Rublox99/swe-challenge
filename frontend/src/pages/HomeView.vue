@@ -162,10 +162,9 @@ const fetchAllEmails = async () => {
                                 'bg-primary-600 px-2 py-1 text-white': email['Message-Id'] === selectedEmail?.['Message-Id'] && userSession.currentTheme.value === 'light',
                                 'bg-primary-300 px-2 py-1 text-white': email['Message-Id'] === selectedEmail?.['Message-Id'] && userSession.currentTheme.value === 'dark'
                             }" v-for="email in emails" :key="email['Message-Id']">
-                            <span class="w-1/3 truncate" :title="email.Subject">{{ email.Subject }}</span>
-                            <span class="w-1/3 text-center truncate" :title="email.From">{{ email.From }}</span>
-                            <span class="w-1/3 text-right truncate" :title="email.To.join(', ')">{{ email.To.join(', ')
-                                }}</span>
+                            <span class="w-1/3 truncate" :title="email.Subject">{{ email.Subject.length === 0 ? '*' : email.Subject }}</span>
+                            <span class="w-1/3 text-center truncate" :title="email.From.length === 0 ? '*' : email.From">{{ email.From.length === 0 ? '*' : email.From }}</span>
+                            <span class="w-1/3 text-right truncate" :title="email.To.length === 0 ? '*' : email.To.join(', ')">{{email.To.length === 0 ? '*' : email.To.join(', ')}}</span>
                         </div>
                     </section>
 
