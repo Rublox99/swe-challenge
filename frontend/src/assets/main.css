@@ -1,3 +1,4 @@
+/* Font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 
 @tailwind base;
@@ -6,6 +7,30 @@
 
 
 :root {
-    --primary-color: #185E5E;
-    --inverted-contrast: #FDFDFD;
+    --light-primary-color: #185E5E;
+    --dark-primary-color: #0E3838;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-corner {
+    display: none;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(72, 75, 90, .5);
+    border: 2pt solid transparent;
+    border-radius: 3pt;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(72, 75, 90, .5);
+    border: 3pt solid transparent;
+    background-clip: content-box;
+}
+/* --------------------------------------------------- */

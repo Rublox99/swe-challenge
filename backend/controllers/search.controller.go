@@ -27,8 +27,6 @@ func GetEmails(w http.ResponseWriter, r *http.Request) {
 		"max_results": %s
 	}`, from, size)
 
-	fmt.Println(query)
-
 	req, err := http.NewRequest("POST", emailsURL, strings.NewReader(query))
 	if err != nil {
 		http.Error(w, "Failed to create HTTP request", http.StatusInternalServerError)
