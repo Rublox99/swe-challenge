@@ -79,7 +79,7 @@ func SearchEmailsWithFilters(w http.ResponseWriter, r *http.Request) {
 		"search_type": "match",
 		"query": {
 			"term": "%s",
-			"fields": ["Body", "Subject"],
+			"fields": ["Body", "Subject", "From", "To"],
 			"fuzziness": 1,
 			"prefix_length": 5
 		},

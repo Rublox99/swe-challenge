@@ -20,15 +20,15 @@ const formatDate = (date) => {
 <template>
   <main class="flex flex-col gap-[15px] md:justify-between w-full rounded-md md:gap-0 md:flex-row lg:flex-row">
     <!-- Search Section -->
-    <section class="flex items-center gap-[10px] w-full lg:w-[400px] md:w-[300px]">
+    <section class="flex items-center gap-[10px] w-full lg:w-[425px] md:w-[325px]">
       <Icon icon="mdi:magnify" width="30"
         :class="userSession.currentTheme.value === 'light' ? 'text-light-contrast' : 'text-dark-contrast'"></Icon>
-      <v-text-field bg-color="transparent" hide-details="auto" clearable label="Search"
+      <v-text-field bg-color="transparent" hide-details="auto" clearable label="Search" placeholder="Search on 'Subject', 'From', 'To' and 'Body' fields"
         variant="outlined"></v-text-field>
     </section>
 
     <!-- Dates Section -->
-    <section class="flex items-center gap-[10px] w-full lg:w-[600px] md:w-[400px] sm:w-[200px]">
+    <section class="flex items-center gap-[10px] w-full lg:w-[600px] md:w-[400px] sm:w-full">
       <v-menu v-model="startMenu" transition="slide-y-transition" min-width="auto" :close-on-content-click="true">
         <template v-slot:activator="{ props }">
           <Icon icon="mdi:date-range" width="30" class="my-auto"
