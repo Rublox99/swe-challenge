@@ -4,7 +4,7 @@ import Footer from '../components/Footer.vue';
 
 import { userSession } from '@/services/sessionService';
 import { ZincService } from '@/services/zincService';
-import { onMounted, ref, toRaw } from 'vue';
+import { onMounted, ref } from 'vue';
 import type { EmailSource } from '@/interfaces/Zinc';
 
 var emails = ref<EmailSource[]>([])
@@ -136,7 +136,7 @@ const fetchAllEmails = async () => {
 
                 <!-- No emails -->
                 <div v-else-if="emails.length === 0" class="flex items-center justify-center h-full">
-                    <span class="animate-fade">{{ $t('home.placeholder.no_emails') }}</span>
+                    <span class="animate-fade">{{ $t('home.placeholders.no_emails') }}</span>
                 </div>
 
                 <!-- Emails -->
@@ -204,7 +204,7 @@ const fetchAllEmails = async () => {
                         'text-gray-800': userSession.currentTheme.value === 'light',
                         'text-gray-600': userSession.currentTheme.value === 'dark'
                     }">
-                        $t('home.placeholders.pick_email')
+                        {{ $t('home.placeholders.pick_email') }}
                     </span>
                 </div>
 

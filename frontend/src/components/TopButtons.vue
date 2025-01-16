@@ -4,6 +4,7 @@ import { Icon } from '@iconify/vue';
 import { ref, watch } from 'vue';
 import { debounce } from '@/services/sessionService';
 import { DateTime } from 'luxon';
+import { useLocale } from 'vuetify/lib/framework.mjs'; // Import Vuetify's locale system
 
 // Define the emit event
 const emit = defineEmits<{
@@ -17,6 +18,8 @@ const endDate = ref();
 
 const startMenu = ref(false);
 const endMenu = ref(false);
+
+const { current: vuetifyLocale } = useLocale();
 
 const formatDate = (date: any) => {
   const d = DateTime.fromJSDate(new Date(date));
@@ -55,7 +58,7 @@ watch([startDate, endDate], () => {
             v-bind="props" v-model="startDate" :readonly="true" />
         </template>
 
-        <v-date-picker show-adjacent-months width="350" @update:model-value="startDate = formatDate($event)"
+        <v-date-picker :hide-header="true" show-adjacent-months width="350" @update:model-value="startDate = formatDate($event)"
           :color="userSession.currentTheme.value === 'light' ? '#185E5E' : '#0E3838'" />
       </v-menu>
 
@@ -70,7 +73,7 @@ watch([startDate, endDate], () => {
             :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
         </template>
 
-        <v-date-picker show-adjacent-months width="350" @update:model-value="endDate = formatDate($event)"
+        <v-date-picker :hide-header="true" show-adjacent-months width="350" @update:model-value="endDate = formatDate($event)"
           :color="userSession.currentTheme.value === 'light' ? '#185E5E' : '#0E3838'" />
       </v-menu>
     </section>

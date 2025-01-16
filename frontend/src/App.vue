@@ -22,8 +22,8 @@ const switchTheme = () => {
 const onLanguageChange = () => {
   const lang = language.value
 
-  current.value = lang
   locale.value = lang
+  current.value = lang
 }
 </script>
 

@@ -17,7 +17,12 @@ import { createI18n } from 'vue-i18n'
 import { enI18n } from './assets/i18n/en'
 import { esI18n } from './assets/i18n/es'
 
+import DateFnsAdapter from '@date-io/date-fns'
+import enUS from 'date-fns/locale/en-US'
+import esES from 'date-fns/locale/es'
+
 const app = createApp(App)
+
 const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
@@ -37,6 +42,13 @@ const vuetify = createVuetify({
         locale: 'en',
         fallback: 'es',
         messages: { en, es }
+    },
+    date: {
+        adapter: DateFnsAdapter,
+        locale: {
+            en: enUS,
+            es: esES,
+        }
     }
 })
 
