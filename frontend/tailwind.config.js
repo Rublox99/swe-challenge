@@ -51,6 +51,9 @@ export default {
         'gradient-bounce': 'gradientBounce 3s ease infinite',
         'fade': 'fadeIn 0.5s ease-out'
       },
+      screens: {
+        'xs': { raw: '(max-width: 767px)' }
+      },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0%' },

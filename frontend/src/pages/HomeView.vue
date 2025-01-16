@@ -4,12 +4,12 @@ import Footer from '../components/Footer.vue';
 
 import { userSession } from '@/services/sessionService';
 import { ZincService } from '@/services/zincService';
-import { onMounted, ref } from 'vue';
-import type { EmailSource } from '@/interfaces/Zinc';
+import { onMounted, ref, toRaw } from 'vue';
+import type { Hit, Hits } from '@/interfaces/Zinc';
 
-var emails = ref<EmailSource[]>([])
+var emails = ref<Hit[]>([])
 var areEmailsLoading = ref(false)
-var selectedEmail = ref<EmailSource>()
+var selectedEmail = ref<Hit>()
 var isSelectedEmailLoading = ref(false)
 
 var searchTerm = ref('')
@@ -19,13 +19,14 @@ var endDate = ref('')
 var page = ref(1)
 var batchSize = ref(10)
 var pageSizes = ref([5, 10, 15, 20])
+var pagesAmount = ref(1)
 
 const errorMessage = ref('')
 const errorTitle = ref('')
 const showAlert = ref(false)
 
-onMounted(() => {
-    fetchAllEmails()
+onMounted(async () => {
+    await fetchAllEmails()
 })
 
 const handleSearch = async (text: string, start: string, end: string) => {
@@ -38,19 +39,15 @@ const handleSearch = async (text: string, start: string, end: string) => {
 }
 
 const onParamChange = async () => {
+    page.value = 1
     const isSearchEmpty = !searchTerm.value.trim()
     const isDateRangeEmpty = !startDate.value && !endDate.value
 
-    page.value = 1
-
-    if (isSearchEmpty && isDateRangeEmpty)
-        await fetchAllEmails()
-    else
-        await fetchFilteredEmails()
+    isSearchEmpty && isDateRangeEmpty ? await fetchAllEmails() : await fetchFilteredEmails()
 }
 
-const onEmailClick = async (e: EmailSource) => {
-    if (e['Message-Id'] === selectedEmail.value?.['Message-Id']) {
+const onEmailClick = async (e: Hit) => {
+    if (e._source['Message-Id'] === selectedEmail.value?._source['Message-Id']) {
         selectedEmail.value = undefined
         return
     }
@@ -74,7 +71,9 @@ const fetchFilteredEmails = async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         const { hits } = await ZincService.GetFilteredEmails(pg === 1 ? 0 : from, size, startDate.value, endDate.value, searchTerm.value)
-        emails.value = hits.hits.map((hit) => hit._source)
+        emails.value = hits.hits
+
+        computeTotalValues(hits)
     } catch (error) {
         errorTitle.value = "Error: Emails"
         errorMessage.value = "An error occurred while fetching the filtered emails. Please, try again."
@@ -98,7 +97,9 @@ const fetchAllEmails = async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         const { hits } = await ZincService.GetAllEmails(pg === 1 ? 0 : from, size)
-        emails.value = hits.hits.map((hit) => hit._source)
+        emails.value = hits.hits
+
+        computeTotalValues(hits)
     } catch (error) {
         errorTitle.value = "Error: Emails"
         errorMessage.value = "An error occurred while fetching the emails. Please, try again."
@@ -110,10 +111,16 @@ const fetchAllEmails = async () => {
         areEmailsLoading.value = false
     }
 }
+
+const computeTotalValues = async (hits: Hits) => {
+    const total = hits.total.value
+    
+    pagesAmount.value = Math.ceil(total / batchSize.value)
+}
 </script>
 
 <template>
-    <main class="relative flex flex-col gap-3 pb-2.5 md:pb-0 w-full h-full mx-auto rounded-md xl:max-w-[1500px]" :class="{
+    <main class="relative flex flex-col gap-3 pb-2.5 md:pb-0 w-full h-full mx-auto rounded-md xl:max-w-[1650px]" :class="{
         'md:h-full': emails.length <= 11,
         'md:h-[92%]': emails.length > 11
     }">
@@ -147,9 +154,10 @@ const fetchAllEmails = async () => {
                         'text-gray-800': userSession.currentTheme.value === 'light',
                         'text-gray-400': userSession.currentTheme.value === 'dark'
                     }">
-                        <span class="w-1/3">{{ $t('home.table.headers.subject') }}</span>
-                        <span class="w-1/3 text-center">{{ $t('home.table.headers.from') }}</span>
-                        <span class="w-1/3 text-right">{{ $t('home.table.headers.to') }}</span>
+                        <span class="w-1/4">{{ $t('home.table.headers.subject') }}</span>
+                        <span class="w-1/4 text-center">ID</span>
+                        <span class="w-1/4 text-center">{{ $t('home.table.headers.from') }}</span>
+                        <span class="w-1/4 text-right">{{ $t('home.table.headers.to') }}</span>
                     </header>
 
                     <!-- Table -->
@@ -159,30 +167,36 @@ const fetchAllEmails = async () => {
                             v-on:click="onEmailClick(email)" :class="{
                                 'hover:bg-primary-300 hover:text-white text-light-contrast': userSession.currentTheme.value === 'light',
                                 'hover:bg-primary-600 hover:text-white text-dark-contrast': userSession.currentTheme.value === 'dark',
-                                'bg-primary-600 px-2 py-1 text-white': email['Message-Id'] === selectedEmail?.['Message-Id'] && userSession.currentTheme.value === 'light',
-                                'bg-primary-300 px-2 py-1 text-white': email['Message-Id'] === selectedEmail?.['Message-Id'] && userSession.currentTheme.value === 'dark'
-                            }" v-for="email in emails" :key="email['Message-Id']">
-                            <span class="w-1/3 truncate" :title="email.Subject">{{ email.Subject.length === 0 ? '*' :
-                                email.Subject }}</span>
-                            <span class="w-1/3 text-center truncate"
-                                :title="email.From.length === 0 ? '*' : email.From">{{ email.From.length === 0 ? '*' :
-                                    email.From }}</span>
-                            <span class="w-1/3 text-right truncate"
-                                :title="email.To.length === 0 ? '*' : email.To.join(', ')">{{ email.To.length === 0 ?
-                                    '*'
-                                    : email.To.join(', ') }}</span>
+                                'bg-primary-600 px-2 py-1 text-white': email._source['Message-Id'] === selectedEmail?._source['Message-Id'] && userSession.currentTheme.value === 'light',
+                                'bg-primary-300 px-2 py-1 text-white': email._source['Message-Id'] === selectedEmail?._source['Message-Id'] && userSession.currentTheme.value === 'dark'
+                            }" v-for="email in emails" :key="email._source['Message-Id']">
+                            <span class="w-1/4 truncate" :title="email._source.Subject">{{ email._source.Subject.length
+                                === 0 ? '*' :
+                                email._source.Subject }}</span>
+                            <span class="w-1/4 text-center truncate"
+                                :title="email._id.length === 0 ? '*' : email._id">{{ email._id.length === 0 ? '*' :
+                                    email._id }}</span>
+                            <span class="w-1/4 text-left truncate"
+                                :title="email._source.From.length === 0 ? '*' : email._source.From">{{
+                                    email._source.From.length === 0 ? '*' :
+                                        email._source.From }}</span>
+                            <span class="w-1/4 text-right truncate"
+                                :title="email._source.To.length === 0 ? '*' : email._source.To.join(', ')">{{
+                                    email._source.To.length === 0 ?
+                                        '*'
+                                        : email._source.To.join(', ') }}</span>
                         </div>
                     </section>
 
                     <!-- Pagination -->
                     <footer class="flex flex-col justify-between w-full md:flex-row">
-                        <v-pagination :disabled="areEmailsLoading" v-model="page"
-                            v-on:update:model-value="fetchAllEmails" size="small" length="4"
+                        <v-pagination class="xs:w-full md:w-[300px] lg:w-[500px]" :disabled="areEmailsLoading" v-model="page"
+                            v-on:update:model-value="fetchAllEmails" size="small" :length="pagesAmount"
                             rounded="circle"></v-pagination>
 
-                        <div class="w-[100px] mx-auto mt-3 md:mt-0 md:w-[150px] md:mx-0 md:ml-auto">
-                            <v-select v-model="batchSize" v-on:update:model-value="onParamChange" label="Page Size"
-                                :hide-details="true" density="compact" width="100" :items="pageSizes"
+                        <div class="w-[100px] xs:mx-auto md:mx-0 md:mt-0 md:w-[150px]">
+                            <v-select v-model="batchSize" v-on:update:model-value="onParamChange"
+                                :label="$t('home.page_size')" :hide-details="true" density="compact" :items="pageSizes"
                                 variant="outlined">
                             </v-select>
                         </div>
@@ -213,7 +227,7 @@ const fetchAllEmails = async () => {
                     'text-dark-contrast': userSession.currentTheme.value === 'dark'
                 }">
                     <span class="block w-full overflow-y-auto font-bold text-center max-h-20 no-scrollbar">
-                        {{ selectedEmail.Subject }}
+                        {{ selectedEmail._source.Subject.length === 0 ? '*' : selectedEmail._source.Subject }}
                     </span>
 
                     <span class="block w-full overflow-y-auto font-bold text-center max-h-20 no-scrollbar" :class="{
@@ -221,7 +235,7 @@ const fetchAllEmails = async () => {
                         'text-gray-600': userSession.currentTheme.value === 'dark'
                     }">
                         {{
-                            new Date(selectedEmail.Date).toISOString()
+                            new Date(selectedEmail._source.Date).toISOString()
                                 .replace('T', ':')
                                 .slice(0, 19)
                                 .replace(/-/g, '/')
@@ -234,7 +248,7 @@ const fetchAllEmails = async () => {
                         <span class="flex-auto text-sm font-normal" :class="{
                             'text-gray-800': userSession.currentTheme.value === 'light',
                             'text-gray-600': userSession.currentTheme.value === 'dark'
-                        }">{{ selectedEmail.From }}</span>
+                        }">{{ selectedEmail._source.From }}</span>
                     </div>
 
                     <div class="w-full flex flex-wrap gap-2.5">
@@ -242,14 +256,22 @@ const fetchAllEmails = async () => {
                         <span class="flex-auto text-sm font-normal" :class="{
                             'text-gray-800': userSession.currentTheme.value === 'light',
                             'text-gray-600': userSession.currentTheme.value === 'dark'
-                        }">{{ selectedEmail.To.join(', ') }}</span>
+                        }">{{ selectedEmail._source.To.join(', ') }}</span>
+                    </div>
+
+                    <div class="w-full flex flex-wrap gap-2.5">
+                        <span class="text-sm font-bold flex-0-0">ID:</span>
+                        <span class="flex-auto text-sm font-normal" :class="{
+                            'text-gray-800': userSession.currentTheme.value === 'light',
+                            'text-gray-600': userSession.currentTheme.value === 'dark'
+                        }">{{ selectedEmail._id }}</span>
                     </div>
 
                     <!-- Divisor -->
                     <div class="w-full h-[1.5px] bg-gray-800 my-3"></div>
 
                     <div class="w-full max-h-[350px] !md:max-h-200px">
-                        <span class="text-left pb-3.5 font-light">{{ selectedEmail.Body }}</span>
+                        <span class="text-left pb-3.5 font-light">{{ selectedEmail._source.Body }}</span>
                     </div>
                 </div>
 
