@@ -9,6 +9,7 @@ import (
 )
 
 var emailsURL = "http://localhost:4080/api/emails/_search"
+var byIndexURL = "http://localhost:4080/api/emails/_doc/"
 
 func GetEmails(w http.ResponseWriter, r *http.Request) {
 	from := r.URL.Query().Get("from")
@@ -166,16 +167,7 @@ func SearchEmailByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := fmt.Sprintf(`
-	{
-		"query": {
-			"term": {
-				"_id": "%s"
-			}
-		}
-	}`, id)
-
-	req, err := http.NewRequest("POST", emailsURL, strings.NewReader(query))
+	req, err := http.NewRequest("GET", byIndexURL+id, nil)
 	if err != nil {
 		http.Error(w, "Failed to create HTTP request", http.StatusInternalServerError)
 		return
