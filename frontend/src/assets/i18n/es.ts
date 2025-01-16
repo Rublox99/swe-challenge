@@ -10,6 +10,11 @@ export const esI18n = {
         start_date: 'Fecha Inicial',
         end_date: 'Fecha Final',
         language: 'Lenguaje',
+        search_type: {
+            label: 'Tipo',
+            id: 'ID',
+            term: 'Término'
+        },
         alerts: {
             error: {
                 email_fetch: {

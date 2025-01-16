@@ -29,6 +29,7 @@ export interface Hit {
     _score: number;
     "@timestamp": string;
     _source: EmailSource;
+    error?: string;
 }
 
 export interface EmailSource {

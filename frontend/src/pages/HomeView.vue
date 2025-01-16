@@ -15,6 +15,7 @@ var isSelectedEmailLoading = ref(false)
 var searchTerm = ref('')
 var startDate = ref('')
 var endDate = ref('')
+var searchType = ref<'term' | 'id'>('term')
 
 var page = ref(1)
 var batchSize = ref(10)
@@ -29,8 +30,18 @@ onMounted(async () => {
     await fetchAllEmails()
 })
 
-const handleSearch = async (text: string, start: string, end: string) => {
+const showErrorNotif = async () => {
+    errorTitle.value = "Error: Emails"
+    errorMessage.value = "An error occurred while fetching the filtered emails. Please, try again."
+
+    showAlert.value = true
+    await new Promise((resolve) => setTimeout(resolve, 2500))
+    showAlert.value = false
+}
+
+const handleSearch = async (text: string, type: 'term' | 'id', start: string, end: string) => {
     searchTerm.value = text
+    searchType.value = type
 
     startDate.value = start
     endDate.value = end
@@ -43,7 +54,22 @@ const onParamChange = async () => {
     const isSearchEmpty = !searchTerm.value.trim()
     const isDateRangeEmpty = !startDate.value && !endDate.value
 
-    isSearchEmpty && isDateRangeEmpty ? await fetchAllEmails() : await fetchFilteredEmails()
+    switch (searchType.value) {
+        case "term":
+            isSearchEmpty && isDateRangeEmpty ? await fetchAllEmails() : await fetchFilteredEmails()
+            break;
+
+        case "id":
+            if (searchTerm.value.length > 0)
+                await fetchByID()
+            else
+                emails.value = []
+            break;
+
+        default:
+            showErrorNotif()
+            break;
+    }
 }
 
 const onEmailClick = async (e: Hit) => {
@@ -75,12 +101,29 @@ const fetchFilteredEmails = async () => {
 
         computeTotalValues(hits)
     } catch (error) {
-        errorTitle.value = "Error: Emails"
-        errorMessage.value = "An error occurred while fetching the filtered emails. Please, try again."
+        showErrorNotif()
+    } finally {
+        areEmailsLoading.value = false
+    }
+}
 
-        showAlert.value = true
-        await new Promise((resolve) => setTimeout(resolve, 2500))
-        showAlert.value = false
+const fetchByID = async () => {
+    areEmailsLoading.value = true
+
+    page.value = 1
+    pagesAmount.value = 1
+
+    try {
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        const response = [await ZincService.GetEmailById(searchTerm.value)]
+
+        if (response.length === 1 && response[0].error)
+            emails.value = []
+        else
+            emails.value = response
+    } catch (error) {
+        showErrorNotif()
     } finally {
         areEmailsLoading.value = false
     }

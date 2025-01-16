@@ -1,4 +1,4 @@
-import type { ZincResponse } from '@/interfaces/Zinc'
+import type { Hit, ZincResponse } from '@/interfaces/Zinc'
 import axios from 'axios'
 
 class ZincService {
@@ -35,9 +35,9 @@ class ZincService {
         }
     }
 
-    static async GetEmailById(id: string): Promise<ZincResponse> {
+    static async GetEmailById(id: string): Promise<Hit> {
         try {
-            const response = await axios.get<ZincResponse>(`${this.baseUrl}/index`, {
+            const response = await axios.get<Hit>(`${this.baseUrl}/index`, {
                 params: {
                     id
                 }

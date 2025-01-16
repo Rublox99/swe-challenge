@@ -10,6 +10,11 @@ export const enI18n = {
         start_date: 'Start Date',
         end_date: 'End Date',
         language: 'Language',
+        search_type: {
+            label: 'Type',
+            id: 'ID',
+            term: 'Term'
+        },
         alerts: {
             error: {
                 email_fetch: {
