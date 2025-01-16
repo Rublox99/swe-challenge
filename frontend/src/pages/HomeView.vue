@@ -114,7 +114,7 @@ const fetchAllEmails = async () => {
 
 const computeTotalValues = async (hits: Hits) => {
     const total = hits.total.value
-    
+
     pagesAmount.value = Math.ceil(total / batchSize.value)
 }
 </script>
@@ -190,8 +190,8 @@ const computeTotalValues = async (hits: Hits) => {
 
                     <!-- Pagination -->
                     <footer class="flex flex-col justify-between w-full md:flex-row">
-                        <v-pagination class="xs:w-full md:w-[300px] lg:w-[500px]" :disabled="areEmailsLoading" v-model="page"
-                            v-on:update:model-value="fetchAllEmails" size="small" :length="pagesAmount"
+                        <v-pagination class="xs:w-full md:w-[300px] lg:w-[500px]" :disabled="areEmailsLoading"
+                            v-model="page" v-on:update:model-value="fetchAllEmails" size="small" :length="pagesAmount"
                             rounded="circle"></v-pagination>
 
                         <div class="w-[100px] xs:mx-auto md:mx-0 md:mt-0 md:w-[150px]">
@@ -257,6 +257,22 @@ const computeTotalValues = async (hits: Hits) => {
                             'text-gray-800': userSession.currentTheme.value === 'light',
                             'text-gray-600': userSession.currentTheme.value === 'dark'
                         }">{{ selectedEmail._source.To.join(', ') }}</span>
+                    </div>
+
+                    <div class="w-full flex flex-wrap gap-2.5">
+                        <span class="text-sm font-bold flex-0-0">CC:</span>
+                        <span class="flex-auto text-sm font-normal" :class="{
+                            'text-gray-800': userSession.currentTheme.value === 'light',
+                            'text-gray-600': userSession.currentTheme.value === 'dark'
+                        }">{{ selectedEmail._source.CC.join(', ') }}</span>
+                    </div>
+
+                    <div class="w-full flex flex-wrap gap-2.5">
+                        <span class="text-sm font-bold flex-0-0">Content-Type:</span>
+                        <span class="flex-auto text-sm font-normal" :class="{
+                            'text-gray-800': userSession.currentTheme.value === 'light',
+                            'text-gray-600': userSession.currentTheme.value === 'dark'
+                        }">{{ selectedEmail._source['Content-Type'] }}</span>
                     </div>
 
                     <div class="w-full flex flex-wrap gap-2.5">

@@ -1,7 +1,7 @@
 export const enI18n = {
     tooltips: {
-        dark_theme: 'Toggle Dark Theme',
-        light_theme: 'Toggle Light Theme'
+        dark_theme: 'Toggle: Dark Theme',
+        light_theme: 'Toggle: Light Theme'
     },
     home: {
         search: 'Search',

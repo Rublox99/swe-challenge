@@ -1,7 +1,7 @@
 export const esI18n = {
     tooltips: {
-        dark_theme: 'Activar Tema Oscuro',
-        light_theme: 'Activar Tema Claro'
+        dark_theme: 'Usar: Tema Oscuro',
+        light_theme: 'Usar: Tema Claro'
     },
     home: {
         search: 'Buscar',
