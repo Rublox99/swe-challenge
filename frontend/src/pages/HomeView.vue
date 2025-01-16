@@ -136,7 +136,7 @@ const fetchAllEmails = async () => {
 
                 <!-- No emails -->
                 <div v-else-if="emails.length === 0" class="flex items-center justify-center h-full">
-                    <span class="animate-fade">No emails were found</span>
+                    <span class="animate-fade">{{ $t('home.placeholder.no_emails') }}</span>
                 </div>
 
                 <!-- Emails -->
@@ -147,9 +147,9 @@ const fetchAllEmails = async () => {
                         'text-gray-800': userSession.currentTheme.value === 'light',
                         'text-gray-400': userSession.currentTheme.value === 'dark'
                     }">
-                        <span class="w-1/3">Subject</span>
-                        <span class="w-1/3 text-center">From</span>
-                        <span class="w-1/3 text-right">To</span>
+                        <span class="w-1/3">{{ $t('home.table.headers.subject') }}</span>
+                        <span class="w-1/3 text-center">{{ $t('home.table.headers.from') }}</span>
+                        <span class="w-1/3 text-right">{{ $t('home.table.headers.to') }}</span>
                     </header>
 
                     <!-- Table -->
@@ -162,9 +162,15 @@ const fetchAllEmails = async () => {
                                 'bg-primary-600 px-2 py-1 text-white': email['Message-Id'] === selectedEmail?.['Message-Id'] && userSession.currentTheme.value === 'light',
                                 'bg-primary-300 px-2 py-1 text-white': email['Message-Id'] === selectedEmail?.['Message-Id'] && userSession.currentTheme.value === 'dark'
                             }" v-for="email in emails" :key="email['Message-Id']">
-                            <span class="w-1/3 truncate" :title="email.Subject">{{ email.Subject.length === 0 ? '*' : email.Subject }}</span>
-                            <span class="w-1/3 text-center truncate" :title="email.From.length === 0 ? '*' : email.From">{{ email.From.length === 0 ? '*' : email.From }}</span>
-                            <span class="w-1/3 text-right truncate" :title="email.To.length === 0 ? '*' : email.To.join(', ')">{{email.To.length === 0 ? '*' : email.To.join(', ')}}</span>
+                            <span class="w-1/3 truncate" :title="email.Subject">{{ email.Subject.length === 0 ? '*' :
+                                email.Subject }}</span>
+                            <span class="w-1/3 text-center truncate"
+                                :title="email.From.length === 0 ? '*' : email.From">{{ email.From.length === 0 ? '*' :
+                                    email.From }}</span>
+                            <span class="w-1/3 text-right truncate"
+                                :title="email.To.length === 0 ? '*' : email.To.join(', ')">{{ email.To.length === 0 ?
+                                    '*'
+                                    : email.To.join(', ') }}</span>
                         </div>
                     </section>
 
@@ -176,7 +182,8 @@ const fetchAllEmails = async () => {
 
                         <div class="w-[100px] mx-auto mt-3 md:mt-0 md:w-[150px] md:mx-0 md:ml-auto">
                             <v-select v-model="batchSize" v-on:update:model-value="onParamChange" label="Page Size"
-                                hide-details :items="pageSizes" variant="outlined">
+                                :hide-details="true" density="compact" width="100" :items="pageSizes"
+                                variant="outlined">
                             </v-select>
                         </div>
                     </footer>
@@ -197,7 +204,7 @@ const fetchAllEmails = async () => {
                         'text-gray-800': userSession.currentTheme.value === 'light',
                         'text-gray-600': userSession.currentTheme.value === 'dark'
                     }">
-                        Pick an email to display it content
+                        $t('home.placeholders.pick_email')
                     </span>
                 </div>
 
@@ -223,7 +230,7 @@ const fetchAllEmails = async () => {
                     </span>
 
                     <div class="w-full flex flex-wrap gap-2.5">
-                        <span class="text-sm font-bold flex-0-0">From:</span>
+                        <span class="text-sm font-bold flex-0-0">{{ $t('home.email_content.from') }}:</span>
                         <span class="flex-auto text-sm font-normal" :class="{
                             'text-gray-800': userSession.currentTheme.value === 'light',
                             'text-gray-600': userSession.currentTheme.value === 'dark'
@@ -231,7 +238,7 @@ const fetchAllEmails = async () => {
                     </div>
 
                     <div class="w-full flex flex-wrap gap-2.5">
-                        <span class="text-sm font-bold flex-0-0">To:</span>
+                        <span class="text-sm font-bold flex-0-0">{{ $t('home.email_content.to') }}:</span>
                         <span class="flex-auto text-sm font-normal" :class="{
                             'text-gray-800': userSession.currentTheme.value === 'light',
                             'text-gray-600': userSession.currentTheme.value === 'dark'

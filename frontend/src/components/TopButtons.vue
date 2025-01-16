@@ -40,8 +40,8 @@ watch([startDate, endDate], () => {
     <section class="flex items-center gap-[10px] w-full lg:w-[425px] md:w-[325px]">
       <Icon icon="mdi:magnify" width="30"
         :class="userSession.currentTheme.value === 'light' ? 'text-light-contrast' : 'text-dark-contrast'" />
-      <v-text-field bg-color="transparent" hide-details="auto" clearable label="Search"
-        placeholder="Search on 'Subject', 'From', 'To' and 'Body' fields" variant="outlined" v-model="term"
+      <v-text-field bg-color="transparent" hide-details="auto" clearable :label="$t('home.search')"
+        :placeholder="$t('home.placeholders.term')" variant="outlined" v-model="term"
         v-on:update:model-value="onSearchApply" />
     </section>
 
@@ -51,7 +51,7 @@ watch([startDate, endDate], () => {
         <template v-slot:activator="{ props }">
           <Icon icon="mdi:date-range" width="30" class="my-auto"
             :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
-          <v-text-field label="Start Date" placeholder="YYYY-mm-dd" hide-details="auto" variant="outlined"
+          <v-text-field :label="$t('home.start_date')" placeholder="YYYY-mm-dd" hide-details="auto" variant="outlined"
             v-bind="props" v-model="startDate" :readonly="true" />
         </template>
 
@@ -62,10 +62,10 @@ watch([startDate, endDate], () => {
       <Icon icon="mdi:arrow-left-right" width="30"
         :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
 
-      <v-menu v-model="endMenu" transition="slide-y-transition" min-width="auto"  :close-on-content-click="false">
+      <v-menu v-model="endMenu" transition="slide-y-transition" min-width="auto" :close-on-content-click="false">
         <template v-slot:activator="{ props }">
-          <v-text-field label="End Date" placeholder="YYYY-mm-dd" hide-details="auto" variant="outlined" v-bind="props"
-            v-model="endDate" :readonly="true" />
+          <v-text-field :label="$t('home.end_date')" placeholder="YYYY-mm-dd" hide-details="auto" variant="outlined"
+            v-bind="props" v-model="endDate" :readonly="true" />
           <Icon icon="mdi:date-range" width="30" class="my-auto"
             :class="userSession.currentTheme.value === 'light' ? 'text-gray-800' : 'text-gray-600'" />
         </template>

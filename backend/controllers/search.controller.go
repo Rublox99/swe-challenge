@@ -69,10 +69,10 @@ func SearchEmailsWithFilters(w http.ResponseWriter, r *http.Request) {
 		size = "10"
 	}
 	if startDate == "" {
-		startDate = "2000-01-01T00:00:00.000Z"
+		startDate = "2000/01/01"
 	}
 	if endDate == "" {
-		endDate = "2024-12-31T23:59:59.999Z"
+		endDate = "2024/12/31"
 	}
 
 	parsedStartDate, err := time.Parse("2006/01/02", startDate)

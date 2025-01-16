@@ -3,13 +3,27 @@ import { RouterView } from 'vue-router'
 
 import { Icon } from '@iconify/vue'
 import { userSession, toggleTheme } from './services/sessionService';
-import { useTheme } from 'vuetify/lib/framework.mjs';
+import { useLocale, useTheme } from 'vuetify/lib/framework.mjs';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { locale } = useI18n() /* Templates Locale */
+const { current } = useLocale() /* Vuetify Locale */
 
 const theme = useTheme()
+
+const language = ref('en')
 
 const switchTheme = () => {
   toggleTheme()
   theme.global.name.value = userSession.currentTheme.value!
+}
+
+const onLanguageChange = () => {
+  const lang = language.value
+
+  current.value = lang
+  locale.value = lang
 }
 </script>
 
@@ -29,9 +43,25 @@ const switchTheme = () => {
         <span class="my-auto text-2xl font-bold uppercase">Lens</span>
       </section>
 
-      <section class="flex items-center justify-center w-auto h-auto">
-        <Icon @click="switchTheme" class="transition-all hover:opacity-80 hover:cursor-pointer text-light-inv_contrast"
-          :icon="userSession.currentTheme.value === 'light' ? 'solar:moon-bold' : 'solar:sun-bold'" width="32"></Icon>
+      <section class="flex gap-2.5 items-center justify-center w-auto h-auto">
+        <v-select class="text-gray-500" density="compact" :hide-details="true" base-color="white"
+          color="white" :item-color="userSession.currentTheme.value === 'light' ? 'black' : 'white'" v-model="language"
+          v-on:update:model-value="onLanguageChange" :label="$t('home.language')" :items="[
+            { lang: 'en', label: 'English' },
+            { lang: 'es', label: 'Español' }
+          ]" :item-title="'label'" :item-value="'lang'" variant="outlined">
+        </v-select>
+
+        <v-tooltip
+          :text="userSession.currentTheme.value === 'light' ? $t('tooltips.dark_theme') : $t('tooltips.light_theme')"
+          location="bottom">
+          <template v-slot:activator="{ props }">
+            <Icon @click="switchTheme" v-bind="props"
+              class="transition-all hover:opacity-80 hover:cursor-pointer text-light-inv_contrast"
+              :icon="userSession.currentTheme.value === 'light' ? 'solar:moon-bold' : 'solar:sun-bold'" width="32">
+            </Icon>
+          </template>
+        </v-tooltip>
       </section>
     </header>
 
