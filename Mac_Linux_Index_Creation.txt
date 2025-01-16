@@ -1,9 +1,3 @@
-1. Install ZincSearch and run it locally
-
-*******************************************************
-
-2. Create the ZincSearch index.
-
 curl -X POST "http://localhost:4080/api/index" \
 -H "Content-Type: application/json" \
 -H "Authorization: Basic $(echo -n 'admin:admin' | base64)" \
@@ -79,46 +73,3 @@ curl -X POST "http://localhost:4080/api/index" \
     }
   }
 }'
-
-
-*******************************************************
-
-3. Creates the main.go with main(), proccessFile() & sendToZinc() functions
-
--> which uploads each read .txt converted into a JSON through ZincSearch API
-
-4. Starts the profiling data inside the main function of main.go
-
-** go tool pprof -seconds <time> http://localhost:6060/debug/pprof/profile
-** go tool pprof <binary> cpu.pprof
-** sudo apt install graphviz (for Linux)
-** (pprof) web opens an SVG chart <=> (pprof) svg > output.svg to save it as .svg
-
-5. Backend Initialize
-
-** go get -u github.com/go-chi/chi/v5 for chi library
-
-
-
-
-/************************** EXTRA **************************\
-	query := fmt.Sprintf(`
-	{
-		"search_type": "match",
-		"query": {
-			"term": "%s",
-			"fields": ["Body", "Subject"],
-			"fuzziness": 1,
-			"prefix_length": 2              // Optional: Ensure the prefix matches at least 2 characters
-		},
-		"filter": {
-			"range": {
-				"Date": {
-					"gte": "%s",
-					"lte": "%s"
-				}
-			}
-		},
-		"from": %s,
-		"max_results": %s
-	}`, text, startDate, endDate, from, size)

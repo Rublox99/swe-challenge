@@ -14,8 +14,8 @@ func main() {
 
 	// Configure CORS middleware
 	corsOptions := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 	})

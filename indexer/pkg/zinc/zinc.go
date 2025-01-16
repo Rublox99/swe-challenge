@@ -16,16 +16,13 @@ const (
 	password = "admin"
 )
 
-// Uploads the email data to the ZincSearch
 func SendToZinc(email models.Email) {
-	// Marshal email to JSON for debugging
 	data, err := json.MarshalIndent(email, "", "  ")
 	if err != nil {
 		fmt.Printf("Error serializing to JSON: %v\n", err)
 		return
 	}
 
-	// Proceed with the original logic
 	req, err := http.NewRequest("POST", zincURL, bytes.NewBuffer(data))
 	if err != nil {
 		fmt.Printf("Error creating HTTP request: %v\n", err)
@@ -43,7 +40,6 @@ func SendToZinc(email models.Email) {
 	}
 	defer resp.Body.Close()
 
-	// Debug response status and body
 	respBody, _ := io.ReadAll(resp.Body)
 	log.Printf("Response Status: %v\n", resp.Status)
 	log.Printf("Response Body: %v\n", string(respBody))

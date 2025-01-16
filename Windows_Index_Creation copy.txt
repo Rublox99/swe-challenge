@@ -1,0 +1,80 @@
+-------------------- POWERSHELL --------------------
+
+curl -X POST "http://localhost:4080/api/index" `
+-H "Content-Type: application/json" `
+-H "Authorization: Basic $(echo -n 'admin:admin' | base64)" `
+-d '{
+  "name": "emails",
+  "storage_type": "disk",
+  "mappings": {
+    "properties": {
+      "MessageId": {
+        "type": "text",
+        "index": true
+      },
+      "Date": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis",
+        "analyzer": "standard"
+      },
+      "From": {
+        "type": "keyword"
+      },
+      "To": {
+        "type": "text",
+        "index": true
+      },
+      "Subject": {
+        "type": "text",
+        "analyzer": "standard",
+        "highlightable": true
+      },
+      "Body": {
+        "type": "text",
+        "analyzer": "standard",
+        "highlightable": true
+      },
+      "CC": {
+        "type": "text",
+        "index": true
+      },
+      "MimeVersion": {
+        "type": "keyword"
+      },
+      "ContentType": {
+        "type": "keyword"
+      },
+      "ContentTransferEncoding": {
+        "type": "keyword"
+      },
+      "XFrom": {
+        "type": "text",
+        "index": true
+      },
+      "XTo": {
+        "type": "text",
+        "index": true
+      },
+      "Xcc": {
+        "type": "text",
+        "index": true
+      },
+      "Xbcc": {
+        "type": "text",
+        "index": true
+      },
+      "XFolder": {
+        "type": "keyword"
+      },
+      "XOrigin": {
+        "type": "keyword"
+      },
+      "XFileName": {
+        "type": "keyword"
+      }
+    }
+  }
+}'
+
+-------------------- CMD --------------------
+curl -X POST "http://localhost:4080/api/index" -H "Content-Type: application/json" -H "Authorization: Basic %=$(echo -n admin:admin | base64)%" -d "{\"name\":\"emails\",\"storage_type\":\"disk\",\"mappings\":{\"properties\":{\"MessageId\":{\"type\":\"text\",\"index\":true},\"Date\":{\"type\":\"date\",\"format\":\"strict_date_optional_time||epoch_millis\",\"analyzer\":\"standard\"},\"From\":{\"type\":\"keyword\"},\"To\":{\"type\":\"text\",\"index\":true},\"Subject\":{\"type\":\"text\",\"analyzer\":\"standard\",\"highlightable\":true},\"Body\":{\"type\":\"text\",\"analyzer\":\"standard\",\"highlightable\":true},\"CC\":{\"type\":\"text\",\"index\":true},\"MimeVersion\":{\"type\":\"keyword\"},\"ContentType\":{\"type\":\"keyword\"},\"ContentTransferEncoding\":{\"type\":\"keyword\"},\"XFrom\":{\"type\":\"text\",\"index\":true},\"XTo\":{\"type\":\"text\",\"index\":true},\"Xcc\":{\"type\":\"text\",\"index\":true},\"Xbcc\":{\"type\":\"text\",\"index\":true},\"XFolder\":{\"type\":\"keyword\"},\"XOrigin\":{\"type\":\"keyword\"},\"XFileName\":{\"type\":\"keyword\"}}}}"

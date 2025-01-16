@@ -8,8 +8,16 @@ import (
 	"time"
 )
 
-var emailsURL = "http://localhost:4080/api/emails/_search"
-var byIndexURL = "http://localhost:4080/api/emails/_doc/"
+const (
+	index    = "emails"
+	username = "admin"
+	password = "admin"
+)
+
+var (
+	emailsURL  = fmt.Sprintf("http://localhost:4080/api/%s/_search", index)
+	byIndexURL = fmt.Sprintf("http://localhost:4080/api/%s/_doc/", index)
+)
 
 func GetEmails(w http.ResponseWriter, r *http.Request) {
 	from := r.URL.Query().Get("from")
@@ -35,7 +43,7 @@ func GetEmails(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.SetBasicAuth("admin", "admin")
+	req.SetBasicAuth(username, password)
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
@@ -138,7 +146,7 @@ func SearchEmailsWithFilters(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.SetBasicAuth("admin", "admin")
+	req.SetBasicAuth(username, password)
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
@@ -173,7 +181,7 @@ func SearchEmailByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.SetBasicAuth("admin", "admin")
+	req.SetBasicAuth(username, password)
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
