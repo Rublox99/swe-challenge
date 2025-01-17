@@ -118,6 +118,17 @@ Starts the profiling data inside the main function of main.go
 
 ---
 
+## It's Deployed! ##
+
+You can access to a running demo on: https://swe-frontend-production.up.railway.app/
+
+```
+- Services requests are based on a deployed version of the backend
+- Backend has it router controllers aimed to a EC2 Ubuntu instance with the ZincSearch running service
+```
+
+#### * In case of error: Wait patiently, as it must be a failure caused by the EC2 instance public IP's
+
 ## Contact
 
 For any question, feel free to reach out:
