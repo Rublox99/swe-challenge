@@ -1,4 +1,4 @@
-curl -X POST "http://localhost:4080/api/index" \
+curl -X POST "http://ec2-52-14-213-114.us-east-2.compute.amazonaws.com:4080/api/index" \
 -H "Content-Type: application/json" \
 -H "Authorization: Basic $(echo -n 'admin:admin' | base64)" \
 -d '{

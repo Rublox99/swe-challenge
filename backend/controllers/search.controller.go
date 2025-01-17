@@ -12,11 +12,12 @@ const (
 	index    = "emails"
 	username = "admin"
 	password = "admin"
+	ec2      = "http://ec2-52-14-213-114.us-east-2.compute.amazonaws.com:4080"
 )
 
 var (
-	emailsURL  = fmt.Sprintf("http://localhost:4080/api/%s/_search", index)
-	byIndexURL = fmt.Sprintf("http://localhost:4080/api/%s/_doc/", index)
+	emailsURL  = fmt.Sprintf("%s/api/%s/_search", ec2, index)
+	byIndexURL = fmt.Sprintf("%s/api/%s/_doc/", ec2, index)
 )
 
 func GetEmails(w http.ResponseWriter, r *http.Request) {

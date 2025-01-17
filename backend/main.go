@@ -24,5 +24,5 @@ func main() {
 	r.Mount("/emails", routers.EmailsRouter())
 
 	log.Println("Server running on port 8080")
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe("0.0.0.0:8080", r)
 }
