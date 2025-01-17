@@ -1,4 +1,4 @@
-# Email Search and Indexing Interface
+# Enron Emails: Search UI and Indexing as Backend Provider
 
 ## About the Project
 
