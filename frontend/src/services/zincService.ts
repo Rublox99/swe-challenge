@@ -2,11 +2,13 @@ import type { Hit, ZincResponse } from '@/interfaces/Zinc'
 import axios from 'axios'
 
 class ZincService {
-    private static baseUrl = "http://localhost:8080/emails"
+    private static localhostURL = "http://localhost:8080/emails"
+    private static ec2URL = "http://ec2-3-144-1-53.us-east-2.compute.amazonaws.com:8080/emails"
+    private static railwayURL = "https://swe-backend-production.up.railway.app/emails"
 
     static async GetFilteredEmails(from: number, size: number, startDate: string, endDate: string, text: string): Promise<ZincResponse> {
         try {
-            const response = await axios.get<ZincResponse>(`${this.baseUrl}/filters`, {
+            const response = await axios.get<ZincResponse>(`${this.railwayURL}/filters`, {
                 params: {
                     from, size,
                     start_date: startDate,
@@ -23,7 +25,7 @@ class ZincService {
 
     static async GetAllEmails(from: number, size: number): Promise<ZincResponse> {
         try {
-            const response = await axios.get<ZincResponse>(`${this.baseUrl}/all`, {
+            const response = await axios.get<ZincResponse>(`${this.railwayURL}/all`, {
                 params: {
                     from, size
                 }
@@ -37,7 +39,7 @@ class ZincService {
 
     static async GetEmailById(id: string): Promise<Hit> {
         try {
-            const response = await axios.get<Hit>(`${this.baseUrl}/index`, {
+            const response = await axios.get<Hit>(`${this.railwayURL}/index`, {
                 params: {
                     id
                 }
