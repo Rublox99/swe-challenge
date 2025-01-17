@@ -234,10 +234,11 @@ const computeTotalValues = async (hits: Hits) => {
                     <!-- Pagination -->
                     <footer class="flex flex-col justify-between w-full md:flex-row">
                         <v-pagination class="xs:w-full md:w-[300px] lg:w-[500px]" :disabled="areEmailsLoading"
-                            v-model="page" v-on:update:model-value="fetchAllEmails" size="small" :length="pagesAmount"
-                            rounded="circle"></v-pagination>
+                            v-model="page"
+                            v-on:update:model-value="fetchFilteredEmails"
+                            size="small" :length="pagesAmount" rounded="circle"></v-pagination>
 
-                        <div class="w-[100px] xs:mx-auto md:mx-0 md:mt-0 md:w-[150px]">
+                        <div class="w-[100px] xs:mx-auto xs:mt-2 md:mx-0 md:mt-0 md:w-[150px]">
                             <v-select v-model="batchSize" v-on:update:model-value="onParamChange"
                                 :label="$t('home.page_size')" :hide-details="true" density="compact" :items="pageSizes"
                                 variant="outlined">
