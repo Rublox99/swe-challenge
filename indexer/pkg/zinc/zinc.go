@@ -13,10 +13,10 @@ import (
 const (
 	username = "admin"
 	password = "admin"
-	ec2      = "http://ec2-52-14-213-114.us-east-2.compute.amazonaws.com:4080"
+	zc_ec2   = "http://ec2-3-144-1-53.us-east-2.compute.amazonaws.com:4080"
 )
 
-var zincURL = fmt.Sprintf("%s/api/emails/_doc", ec2)
+var zincURL = fmt.Sprintf("%s/api/emails/_doc", zc_ec2)
 
 func SendToZinc(email models.Email) {
 	data, err := json.MarshalIndent(email, "", "  ")

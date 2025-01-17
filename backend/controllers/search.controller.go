@@ -9,15 +9,15 @@ import (
 )
 
 const (
-	index    = "emails"
 	username = "admin"
 	password = "admin"
-	ec2      = "http://ec2-52-14-213-114.us-east-2.compute.amazonaws.com:4080"
+	zc_ec2   = "http://ec2-3-144-1-53.us-east-2.compute.amazonaws.com:4080"
+	index    = "emails"
 )
 
 var (
-	emailsURL  = fmt.Sprintf("%s/api/%s/_search", ec2, index)
-	byIndexURL = fmt.Sprintf("%s/api/%s/_doc/", ec2, index)
+	emailsURL  = fmt.Sprintf("%s/api/%s/_search", zc_ec2, index)
+	byIndexURL = fmt.Sprintf("%s/api/%s/_doc/", zc_ec2, index)
 )
 
 func GetEmails(w http.ResponseWriter, r *http.Request) {
