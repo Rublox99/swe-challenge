@@ -27,7 +27,8 @@ export const enI18n = {
             headers: {
                 subject: 'Subject',
                 from: 'From',
-                to: 'To'
+                to: 'To',
+                date: 'Date'
             }
         },
         email_content: {

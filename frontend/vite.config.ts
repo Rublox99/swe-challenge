@@ -3,14 +3,14 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
-import vueDevTools from 'vite-plugin-vue-devtools';
+//import vueDevTools from 'vite-plugin-vue-devtools';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
     vue(),
     vueJsx(),
     // Only enable Vue DevTools in development mode
-    ...(mode === 'development' ? [vueDevTools()] : []),
+    //...(mode === 'development' ? [vueDevTools()] : []),
   ],
   server: {
     host: '0.0.0.0',

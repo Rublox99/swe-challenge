@@ -35,7 +35,14 @@ func GetEmails(w http.ResponseWriter, r *http.Request) {
 	{
     	"search_type": "alldocuments",
 		"from": %s,
-		"max_results": %s
+		"max_results": %s,
+		"sort": [
+			{
+				"Date": {
+					"order": "asc"
+				}
+			}
+		]
 	}`, from, size)
 
 	req, err := http.NewRequest("POST", emailsURL, strings.NewReader(query))
@@ -122,7 +129,14 @@ func SearchEmailsWithFilters(w http.ResponseWriter, r *http.Request) {
             }
         },
         "from": %s,
-        "max_results": %s
+        "max_results": %s,
+		"sort": [
+			{
+				"Date": {
+					"order": "asc"
+				}
+			}
+		]
     }`, text, startDateMillis, endDateMillis, from, size)
 	} else {
 		query = fmt.Sprintf(`

@@ -27,7 +27,8 @@ export const esI18n = {
             headers: {
                 subject: 'Asunto',
                 from: 'De',
-                to: 'Para'
+                to: 'Para',
+                date: 'Fecha'
             }
         },
         email_content: {

@@ -174,10 +174,11 @@ const computeTotalValues = async (hits: Hits) => {
             'md:h-[85.5%]': emails.length > 11
         }">
             <!-- Mails List -->
-            <div class="w-full h-[75vh] rounded-md p-4 !md:max-w-[750px] md:h-full md:w-[60%]" :class="{
-                'bg-gray-300': userSession.currentTheme.value === 'light',
-                'bg-gray-900': userSession.currentTheme.value === 'dark'
-            }">
+            <div class="w-full h-[75vh] rounded-md p-4 !md:max-w-[750px] md:h-full md:w-[60%] xs:border xs:border-gray-600 md:shadow-md"
+                :class="{
+                    'bg-gray-300': userSession.currentTheme.value === 'light',
+                    'bg-gray-900': userSession.currentTheme.value === 'dark'
+                }">
 
                 <!-- Loader -->
                 <div v-if="areEmailsLoading" class="flex items-center justify-center h-full">
@@ -198,7 +199,7 @@ const computeTotalValues = async (hits: Hits) => {
                         'text-gray-400': userSession.currentTheme.value === 'dark'
                     }">
                         <span class="w-1/4">{{ $t('home.table.headers.subject') }}</span>
-                        <span class="w-1/4 text-center">ID</span>
+                        <span class="w-1/4 text-center">{{ $t('home.table.headers.date') }}</span>
                         <span class="w-1/4 text-center">{{ $t('home.table.headers.from') }}</span>
                         <span class="w-1/4 text-right">{{ $t('home.table.headers.to') }}</span>
                     </header>
@@ -216,9 +217,13 @@ const computeTotalValues = async (hits: Hits) => {
                             <span class="w-1/4 truncate" :title="email._source.Subject">{{ email._source.Subject.length
                                 === 0 ? '*' :
                                 email._source.Subject }}</span>
-                            <span class="w-1/4 text-center truncate"
-                                :title="email._id.length === 0 ? '*' : email._id">{{ email._id.length === 0 ? '*' :
-                                    email._id }}</span>
+                            <span class="w-1/4 text-center truncate" :title="new Date(email._source.Date).toISOString().replace('T', ':').slice(0, 19).replace(/-/g, '/').replace(/:/, '-')">
+                                {{
+                                    new Date(email._source.Date).toISOString()
+                                        .replace('T', ':')
+                                        .slice(0, 10)
+                                }}
+                            </span>
                             <span class="w-1/4 text-left truncate"
                                 :title="email._source.From.length === 0 ? '*' : email._source.From">{{
                                     email._source.From.length === 0 ? '*' :
@@ -234,9 +239,8 @@ const computeTotalValues = async (hits: Hits) => {
                     <!-- Pagination -->
                     <footer class="flex flex-col justify-between w-full md:flex-row">
                         <v-pagination class="xs:w-full md:w-[300px] lg:w-[500px]" :disabled="areEmailsLoading"
-                            v-model="page"
-                            v-on:update:model-value="fetchFilteredEmails"
-                            size="small" :length="pagesAmount" rounded="circle"></v-pagination>
+                            v-model="page" v-on:update:model-value="fetchFilteredEmails" size="small"
+                            :length="pagesAmount" rounded="circle"></v-pagination>
 
                         <div class="w-[100px] xs:mx-auto xs:mt-2 md:mx-0 md:mt-0 md:w-[150px]">
                             <v-select v-model="batchSize" v-on:update:model-value="onParamChange"
@@ -249,10 +253,11 @@ const computeTotalValues = async (hits: Hits) => {
             </div>
 
             <!-- On Email Pick -->
-            <div class="relative w-full h-[75vh] p-4 rounded-md md:h-full md:w-[40%] overflow-y-auto" :class="{
-                'bg-gray-300': userSession.currentTheme.value === 'light',
-                'bg-gray-900': userSession.currentTheme.value === 'dark'
-            }">
+            <div class="relative w-full h-[75vh] p-4 rounded-md md:h-full md:w-[40%] overflow-y-auto xs:border xs:border-gray-600 md:shadow-md"
+                :class="{
+                    'bg-gray-300': userSession.currentTheme.value === 'light',
+                    'bg-gray-900': userSession.currentTheme.value === 'dark'
+                }">
                 <!-- Linear Loader -->
                 <v-progress-linear :active="isSelectedEmailLoading" :indeterminate="isSelectedEmailLoading" absolute
                     bottom></v-progress-linear>
